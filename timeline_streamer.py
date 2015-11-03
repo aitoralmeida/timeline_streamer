@@ -51,7 +51,7 @@ def initialization():
         last_ids = json.load(open(open('last_ids.json', 'r')))
     except:
         # If no last ids on record, get the most recent one for each user
-        log_msg('No last_ids found, recovering the most recent status for each user')
+        log_msg('  -No last_ids found, recovering the most recent status for each user')
         for screen_name in screen_names:
             statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = 1)
             # If the account does not have any tweet, the last id is 0
