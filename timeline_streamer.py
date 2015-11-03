@@ -53,13 +53,23 @@ def initialization():
         log_msg('No last_ids found, recovering the most recent status for each user')
         for screen_name in screen_names:
             statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = 1)
-            last_ids[screen_name] = max([s['id'] for s in statuses])
-            save_statuses(screen_name, last_ids[screen_name], statuses)  
+            # If the account does not have any tweet, the last id is 0
+            try:
+                last_ids[screen_name] = max([s['id'] for s in statuses])
+            except: 
+                last_ids[screen_name] = 0
+            if len(statuses) > 0:  
+                save_statuses(screen_name, last_ids[screen_name], statuses)  
             
 def log_msg(msg):
     now = datetime.now()
     print '%s-%s %s:%s:%s %s' % (now.month, now.day, now.hour, now.minute, now.seconds, msg)
-
-
+    
 if __name__ == '__main__':
     log_msg('Initializing ...')
+    initialization()
+    while True:
+       recover_statuses(count = 200) 
+    
+    
+    
