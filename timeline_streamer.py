@@ -8,6 +8,7 @@ Created on Mon Nov 02 11:51:52 2015
 import json
 import twitter
 from datetime import datetime
+import time
 
 # last processed tweet ids
 last_ids = {}
@@ -26,7 +27,7 @@ auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
 twitter_api = twitter.Twitter(auth=auth) 
         
 def save_statuses(screen_name, last_id, statuses):
-    log_msg('Saving % tweets for %s' % (len(statuses), screen_name))
+    log_msg('  -Saving % tweets for %s' % (len(statuses), screen_name))
     filename = '/statuses/%s-%s.json' % (screen_name, last_id)
     json.dump(statuses, open(filename, 'w'))
         
@@ -70,6 +71,7 @@ if __name__ == '__main__':
     initialization()
     while True:
        recover_statuses(count = 200) 
+       time.sleep(60 * 5)
     
     
     
