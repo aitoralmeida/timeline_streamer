@@ -27,8 +27,8 @@ auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
 twitter_api = twitter.Twitter(auth=auth) 
         
 def save_statuses(screen_name, last_id, statuses):
-    log_msg('  -Saving % tweets for %s' % (len(statuses), screen_name))
-    filename = '/statuses/%s-%s.json' % (screen_name, last_id)
+    log_msg('  -Saving %s tweets for %s' % (len(statuses), screen_name))
+    filename = './statuses/%s-%s.json' % (screen_name, last_id)
     json.dump(statuses, open(filename, 'w'))
         
 def recover_statuses(count = 200):
@@ -42,13 +42,14 @@ def recover_statuses(count = 200):
     json.dump(last_ids, open('last_ids.json', 'w'))
     
 def initialization():
+    last_ids = {}
     # Get screen names to process
     log_msg('Loading the screen names to process...')
     screen_names = json.load(open('screen_names.json', 'r'))   
     # Get last processed tweet ids
     log_msg('Loading the last processed ids...')
     try:
-        last_ids = json.load(open(open('last_ids.json', 'r')))
+        last_ids = json.load(open('last_ids.json', 'r'))
     except:
         # If no last ids on record, get the most recent one for each user
         log_msg('  -No last_ids found, recovering the most recent status for each user')
@@ -61,16 +62,19 @@ def initialization():
                 last_ids[screen_name] = 0
             if len(statuses) > 0:  
                 save_statuses(screen_name, last_ids[screen_name], statuses)  
+    
+    return screen_names, last_ids
             
 def log_msg(msg):
     now = datetime.now()
-    print '%s-%s %s:%s:%s %s' % (now.month, now.day, now.hour, now.minute, now.seconds, msg)
+    print '%s-%s %s:%s:%s %s' % (now.month, now.day, now.hour, now.minute, now.second, msg)
     
 if __name__ == '__main__':
     log_msg('Initializing ...')
-    initialization()
+    screen_names, last_ids = initialization()
     while True:
        recover_statuses(count = 200) 
+       log_msg('Waiting 5 mins ...')
        time.sleep(60 * 5)
     
     
