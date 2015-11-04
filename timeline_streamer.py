@@ -5,11 +5,14 @@ Created on Mon Nov 02 11:51:52 2015
 @author: aitor
 """
 
-import json
-import twitter
 from datetime import datetime
-import time
+import json
+import os
 import sys
+import time
+
+import twitter
+
 
 # last processed tweet ids
 last_ids = {}
@@ -28,8 +31,12 @@ auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET,
 twitter_api = twitter.Twitter(auth=auth) 
         
 def save_statuses(screen_name, last_id, statuses):
+    now = datetime.now()
+    folder = './statuses/%s-%s-%s' % (now.year, now.month, now.day)
+    if not os.path.isdir(folder):
+        os.makedirs(folder)
     log_msg('  -Saving %s tweets for %s' % (len(statuses), screen_name))
-    filename = './statuses/%s-%s.json' % (screen_name, last_id)
+    filename = '%s/%s-%s.json' % (folder, screen_name, last_id)
     json.dump(statuses, open(filename, 'w'))
         
 def recover_statuses(count = 200):
