@@ -9,6 +9,7 @@ import json
 import twitter
 from datetime import datetime
 import time
+import sys
 
 # last processed tweet ids
 last_ids = {}
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     while True:
        recover_statuses(count = 200) 
        log_msg('Waiting 5 mins ...')
+       sys.stdout.flush()
        time.sleep(60 * 5)
     
     
