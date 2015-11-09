@@ -13,7 +13,6 @@ import time
 
 import twitter
 
-
 # last processed tweet ids
 last_ids = {}
 # Screen names to follow
@@ -62,7 +61,18 @@ def initialization():
         # If no last ids on record, get the most recent one for each user
         log_msg('  -No last_ids found, recovering the most recent status for each user')
         for screen_name in screen_names:
-            statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = 1)
+            # If there is an error recovering the statuses, wait 2 mins and retry
+            retry = True
+            while(retry):
+                try:
+                    statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = 1)
+                    retry = False
+                except Exception as err:
+                    log_msg ('***ERROR****: Error recovering statuses, waiting 2 mins')
+                    log_msg(err)
+                    time.sleep(60 * 2)
+                    retry = True
+                    
             # If the account does not have any tweet, the last id is 0
             try:
                 last_ids[screen_name] = max([s['id'] for s in statuses])
