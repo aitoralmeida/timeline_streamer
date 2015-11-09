@@ -40,19 +40,19 @@ def save_statuses(screen_name, last_id, statuses):
         
 def recover_statuses(count = 200):
     log_msg('Recovering tweets for %s users...' % len(screen_names))
-    for screen_name in screen_names:
+    for screen_name in screen_names:        
         # If there is an error recovering the statuses, wait 2 mins and retry
         retry = True
         while(retry):
             try:
-                statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = 1)
+                statuses  = twitter_api.statuses.user_timeline(screen_name = screen_name, count = count, since_id = last_ids[screen_name])
                 retry = False
             except Exception as err:
                 log_msg ('***ERROR****: Error recovering statuses, waiting 2 mins')
                 log_msg(err)
                 time.sleep(60 * 2)
-                retry = True
-                
+                retry = True        
+        
         if len(statuses) > 0:        
             last_ids[screen_name] = max([s['id'] for s in statuses])
             save_statuses(screen_name, last_ids[screen_name], statuses) 
