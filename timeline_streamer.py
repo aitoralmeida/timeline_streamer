@@ -80,6 +80,7 @@ def initialization():
                     retry = False
                 except Exception as err:
                     log_msg ('***ERROR****: Error recovering statuses, waiting 2 mins')
+                    sys.stdout.flush()
                     log_msg(err)
                     time.sleep(60 * 2)
                     retry = True
@@ -90,8 +91,8 @@ def initialization():
             except: 
                 last_ids[screen_name] = 0
             if len(statuses) > 0:  
-                save_statuses(screen_name, last_ids[screen_name], statuses)  
-    
+                save_statuses(screen_name, last_ids[screen_name], statuses)      
+    sys.stdout.flush()    
     return screen_names, last_ids
             
 def log_msg(msg):
@@ -100,6 +101,7 @@ def log_msg(msg):
     
 if __name__ == '__main__':
     log_msg('Initializing ...')
+    sys.stdout.flush()
     screen_names, last_ids = initialization()
     while True:
        recover_statuses(count = 200) 
